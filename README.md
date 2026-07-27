@@ -22,9 +22,9 @@ npx @quincarter/create-lit-app my-app
 
 When prompted, you can choose from three starter presets:
 
-1. **Full App Shell Starter**: Header, Navigation, Router, Contexts, Signals Todo List, Cards, Charts, and MFE Loader.
-2. **Blank App Shell Host**: Minimal Lit App host container with App Shell foundations.
-3. **Custom Selection**: Interactively toggle specific architectural features and component showcases.
+1. **Full App Shell Starter**: header, navigation, router, contexts, signals Todo List, cards, charts, and MFE loader.
+2. **Blank App Shell Host**: minimal Lit App host container with App Shell foundations.
+3. **Custom Selection**: interactively toggle specific architectural features and component showcases.
 
 ---
 
