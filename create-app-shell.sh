@@ -90,7 +90,7 @@ parse_args() {
       --install) RUN_INSTALL=true ;;
       --no-install) RUN_INSTALL=false ;;
       -v|--version)
-        echo "@quincarter/create-lit-app v1.0.0"
+        echo "@quincarter/create-lit-app v1.0.12"
         exit 0
         ;;
       --help|-h)
@@ -98,10 +98,10 @@ parse_args() {
         echo -e "${BLUE}Scaffold modular Lit Element applications with signals, context, routing, and UI suites.${RESET}\n"
 
         echo -e "${BOLD}${YELLOW}USAGE:${RESET}"
-        echo -e "  ${GREEN}npx @quincarter/create-lit-app${RESET} [options]\n"
+        echo -e "  ${GREEN}npx @quincarter/create-lit-app${RESET} [app-name] [options]\n"
 
         echo -e "${BOLD}${YELLOW}PROJECT CONFIGURATION:${RESET}"
-        printf "  ${CYAN}%-32s${RESET} %s\n" "--name=<name>" "Project directory / package name"
+        printf "  ${CYAN}%-32s${RESET} %s\n" "[app-name], --name=<name>" "Project directory / package name"
         printf "  ${CYAN}%-32s${RESET} %s\n" "--template=<type>" "Starter template: full | blank | custom (default: full)"
         printf "  ${CYAN}%-32s${RESET} %s\n" "--pm=<yarn|npm>" "Package manager to use (default: yarn)"
         echo ""
@@ -130,6 +130,13 @@ parse_args() {
         echo ""
         exit 0
         ;;
+      -*)
+        ;;
+      *)
+        if [ -z "$APP_NAME" ]; then
+          APP_NAME="$arg"
+        fi
+        ;;
     esac
   done
 }
@@ -140,6 +147,8 @@ prompt_user() {
   if [ -z "$APP_NAME" ]; then
     read -rp "Enter app name (default: my-app-shell): " input_name
     APP_NAME=${input_name:-my-app-shell}
+  else
+    echo -e "Creating app: ${BOLD}${CYAN}$APP_NAME${RESET}\n"
   fi
 
   echo -e "\nChoose starter template preset:"
@@ -559,14 +568,15 @@ import type { MfeItem } from "../utilities/mfe-loader.utility";
 
 export const MFE_LOADER_CONFIG: MfeItem[] = [
 	{
-		mfeBundleUrl: "https://quincarter.github.io/my-coffee-app/assets/coffee-users-PQOfY16o.js",
+		mfeBundleUrl:
+			"https://quincarter.github.io/vite-test-my-element-mfe/assets/index-DVYAdQcO.js",
 		scriptType: "module",
 		isAsync: false,
 		defer: false,
 		crossOrigin: "anonymous",
-		tagName: "coffee-users",
-		associatedInternalTag: "home-page",
-	}
+		tagName: "my-element",
+		associatedInternalTag: "vite-mfe",
+	},
 ];
 EOF
 
@@ -1513,7 +1523,7 @@ import { ViewMixin } from "../view.mixin";
 
 @customElement("vite-mfe")
 export class ViteMfe extends ViewMixin(LitElement) {
-	tagName = "coffee-users";
+	tagName = "my-element";
 	featureIsEnabled = true;
 	isMfe = true;
 

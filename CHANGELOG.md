@@ -1,5 +1,29 @@
 # @quincarter/create-lit-app
 
+## 1.0.15
+
+### Patch Changes
+
+- updated vite.mfe
+
+## 1.0.13
+
+### Patch Changes
+
+- Updated script to detect name properly
+
+## 1.0.11
+
+### Patch Changes
+
+- updated url
+
+## 1.0.9
+
+### Patch Changes
+
+- updated vite mfe so it works on generation
+
 ## 1.0.7
 
 ### Patch Changes

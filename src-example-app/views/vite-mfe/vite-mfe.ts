@@ -9,6 +9,6 @@ export class ViteMfe extends ViewMixin(LitElement) {
 	isMfe = true;
 
 	render(): HTMLTemplateResult {
-		return html`isMfe = ${this.isMfe}${this.renderMfe()}`;
+		return html`${this.renderMfe()}`;
 	}
 }
