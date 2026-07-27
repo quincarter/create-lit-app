@@ -1,5 +1,11 @@
 # @quincarter/create-lit-app
 
+## 1.0.3
+
+### Patch Changes
+
+- Added public access
+
 ## 1.0.2
 
 ### Patch Changes
