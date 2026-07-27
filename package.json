@@ -1,0 +1,38 @@
+{
+  "name": "@quincarter/create-lit-app",
+  "version": "1.0.0",
+  "description": "Interactive CLI initializer for Lit Element App Shell architecture",
+  "main": "create-app-shell.sh",
+  "bin": {
+    "create-lit-app": "./create-app-shell.sh",
+    "create-app-shell": "./create-app-shell.sh"
+  },
+  "man": "./man/create-lit-app.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "create-app-shell.sh",
+    "man/",
+    "README.md"
+  ],
+  "keywords": [
+    "create-lit-app",
+    "lit",
+    "lit-element",
+    "app-shell",
+    "signals",
+    "vite",
+    "scaffold",
+    "cli"
+  ],
+  "author": "Quin Carter",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quincarter/app-shell-starter.git"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.1"
+  }
+}

@@ -1,0 +1,74 @@
+.\" Manpage for @quincarter/create-lit-app
+.TH CREATE-LIT-APP 1 "27 July 2026" "1.0.0" "create-lit-app Manual"
+.SH NAME
+create-lit-app \- Interactive CLI generator for Lit Element App Shell applications
+.SH SYNOPSIS
+.B npx @quincarter/create-lit-app
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B create-lit-app
+is an interactive CLI initializer that scaffolds production-ready Lit Element applications based on a modular App Shell architecture with optional Preact Signals, Lit Context, Lit Router, and UI component suites.
+.SH OPTIONS
+.TP
+.BR \-\-name= \fINAME\fR
+Set the project directory and package name (default: my-app-shell).
+.TP
+.BR \-\-template= \fITYPE\fR
+Starter template preset: \fBfull\fR | \fBblank\fR | \fBcustom\fR (default: full).
+.TP
+.BR \-\-pm= \fIPM\fR
+Package manager to use: \fByarn\fR | \fBnpm\fR (default: yarn).
+.TP
+.BR \-\-router ", " \-\-no-router
+Enable or disable @lit-labs/router (automatically enables @lit/context).
+.TP
+.BR \-\-context ", " \-\-no-context
+Enable or disable @lit/context dependency injection.
+.TP
+.BR \-\-signals ", " \-\-no-signals
+Enable or disable Preact Signals and IndexedDB persistence.
+.TP
+.BR \-\-todos ", " \-\-no-todos
+Enable or disable Signals Todo List component and view.
+.TP
+.BR \-\-cards ", " \-\-no-cards
+Enable or disable Generic Card component and examples view.
+.TP
+.BR \-\-charts ", " \-\-no-charts
+Enable or disable Chart.js wrapper component and examples view.
+.TP
+.BR \-\-header ", " \-\-no-header
+Enable or disable AppShellHeader component.
+.TP
+.BR \-\-theme-switcher ", " \-\-no-theme-switcher
+Enable or disable Theme Switcher component.
+.TP
+.BR \-\-mfe-loader ", " \-\-no-mfe-loader
+Enable or disable Micro-Frontend (MFE) loader utility.
+.TP
+.BR \-\-git ", " \-\-no-git
+Initialize Git repository (default: true).
+.TP
+.BR \-\-install ", " \-\-no-install
+Run package manager dependency installation (default: false).
+.TP
+.BR \-y ", " \-\-yes
+Run non-interactively with current CLI flags.
+.TP
+.BR \-v ", " \-\-version
+Display version number.
+.TP
+.BR \-h ", " \-\-help
+Display help output.
+.SH EXAMPLES
+.TP
+.B Interactive Scaffolding:
+npx @quincarter/create-lit-app
+.TP
+.B Full Starter Preset:
+npx @quincarter/create-lit-app --name=my-app --template=full
+.TP
+.B Custom Signals App:
+npx @quincarter/create-lit-app --name=my-signals-app --template=custom --todos --signals --router --header
+.SH AUTHOR
+Quin Carter <quincarter>
