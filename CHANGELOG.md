@@ -1,5 +1,11 @@
 # @quincarter/create-lit-app
 
+## 1.0.7
+
+### Patch Changes
+
+- Update script to have a completion flow
+
 ## 1.0.3
 
 ### Patch Changes

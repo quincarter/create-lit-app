@@ -1,11 +1,11 @@
 {
   "name": "@quincarter/create-lit-app",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "Interactive CLI initializer for Lit Element App Shell architecture",
   "type": "module",
   "bin": {
-    "create-lit-app": "bin/create-lit-app.js",
-    "create-app-shell": "bin/create-lit-app.js"
+    "create-lit-app": "./bin/create-lit-app.js",
+    "create-app-shell": "./bin/create-lit-app.js"
   },
   "scripts": {
     "changeset": "changeset",
