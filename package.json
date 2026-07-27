@@ -1,21 +1,30 @@
 {
   "name": "@quincarter/create-lit-app",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Interactive CLI initializer for Lit Element App Shell architecture",
-  "main": "create-app-shell.sh",
+  "type": "module",
   "bin": {
-    "create-lit-app": "./create-app-shell.sh",
-    "create-app-shell": "./create-app-shell.sh"
+    "create-lit-app": "bin/create-lit-app.js",
+    "create-app-shell": "bin/create-lit-app.js"
+  },
+  "scripts": {
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish"
   },
   "man": "./man/create-lit-app.1",
   "publishConfig": {
     "access": "public"
   },
   "files": [
+    "bin/",
     "create-app-shell.sh",
     "man/",
     "README.md"
   ],
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1"
+  },
   "keywords": [
     "create-lit-app",
     "lit",
@@ -31,8 +40,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quincarter/app-shell-starter.git"
-  },
-  "devDependencies": {
-    "@changesets/cli": "^2.31.1"
   }
 }
