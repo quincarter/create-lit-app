@@ -18,13 +18,17 @@ npx @quincarter/create-lit-app my-app
 
 ---
 
-## Starter Templates
+## Starter Templates & Interactive TUI
 
-When prompted, you can choose from three starter presets:
+When prompted, an interactive terminal user interface (TUI) lets you easily select options using **Arrow Keys** (or `j`/`k`), **Spacebar** to toggle checkboxes, and **Enter** to confirm. 
+
+You can choose from three starter presets:
 
 1. **Full App Shell Starter**: header, navigation, router, contexts, signals Todo List, cards, charts, and MFE loader.
 2. **Blank App Shell Host**: minimal Lit App host container with App Shell foundations.
-3. **Custom Selection**: interactively toggle specific architectural features and component showcases.
+3. **Custom Selection**: interactively toggle specific architectural features in a scrollable TUI checkbox list with automatic dependency checks (e.g. selecting Routing enforces Lit Context).
+
+Single-select questions (Package Manager, Git Initialization, Install Dependencies) use interactive TUI radio options.
 
 ---
 
@@ -40,7 +44,7 @@ npx @quincarter/create-lit-app [options]
 | :--- | :--- | :--- |
 | `--name=<name>` | Project directory / package name | `my-app-shell` |
 | `--template=<type>` | Preset: `full` \| `blank` \| `custom` | `full` |
-| `--pm=<yarn\|npm>` | Package manager to use | `yarn` |
+| `--pm=<yarn\|npm\|pnpm>` | Package manager to use (`yarn`, `npm`, or `pnpm`) | `yarn` |
 | `--router` / `--no-router` | `@lit-labs/router` (auto-enables `@lit/context`) | `true` |
 | `--context` / `--no-context` | `@lit/context` dependency injection | `true` |
 | `--signals` / `--no-signals` | Preact Signals & IndexedDB store | `true` |

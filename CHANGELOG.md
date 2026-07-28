@@ -1,5 +1,17 @@
 # @quincarter/create-lit-app
 
+## 1.1.1
+
+### Patch Changes
+
+- updated so arrow keys work
+
+## 1.1.0
+
+### Minor Changes
+
+- updated terminal UI to have a multi-select
+
 ## 1.0.15
 
 ### Patch Changes

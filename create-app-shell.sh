@@ -84,11 +84,20 @@ parse_args() {
       --no-cards) ENABLE_CARDS=false ;;
       --charts) ENABLE_CHARTS=true ;;
       --no-charts) ENABLE_CHARTS=false ;;
-      --pm=*) PACKAGE_MANAGER="${arg#*=}" ;;
+      --pm=*)
+        pm_val="${arg#*=}"
+        if [[ "$pm_val" =~ ^(yarn|npm|pnpm)$ ]]; then
+          PACKAGE_MANAGER="$pm_val"
+        else
+          log_error "Invalid package manager: $pm_val (must be yarn, npm, or pnpm)"
+          exit 1
+        fi
+        ;;
       --git) INIT_GIT=true ;;
       --no-git) INIT_GIT=false ;;
       --install) RUN_INSTALL=true ;;
       --no-install) RUN_INSTALL=false ;;
+      -y|--yes) NON_INTERACTIVE=true ;;
       -v|--version)
         echo "@quincarter/create-lit-app v1.0.12"
         exit 0
@@ -103,7 +112,7 @@ parse_args() {
         echo -e "${BOLD}${YELLOW}PROJECT CONFIGURATION:${RESET}"
         printf "  ${CYAN}%-32s${RESET} %s\n" "[app-name], --name=<name>" "Project directory / package name"
         printf "  ${CYAN}%-32s${RESET} %s\n" "--template=<type>" "Starter template: full | blank | custom (default: full)"
-        printf "  ${CYAN}%-32s${RESET} %s\n" "--pm=<yarn|npm>" "Package manager to use (default: yarn)"
+        printf "  ${CYAN}%-32s${RESET} %s\n" "--pm=<yarn|npm|pnpm>" "Package manager to use (default: yarn)"
         echo ""
 
         echo -e "${BOLD}${YELLOW}CORE ARCHITECTURE & STATE:${RESET}"
@@ -141,6 +150,260 @@ parse_args() {
   done
 }
 
+# Terminal Raw Mode & Input Helpers for TUI
+OLD_STTY=""
+
+cleanup_tui() {
+  echo -ne "\033[?25h" # Restore cursor
+  if [ -n "$OLD_STTY" ]; then
+    stty "$OLD_STTY" 2>/dev/null || true
+    OLD_STTY=""
+  fi
+}
+
+trap cleanup_tui EXIT INT TERM
+
+read_key() {
+  local key subkey
+  IFS= read -r -s -n1 key 2>/dev/null || true
+  if [[ "$key" == $'\x1b' ]]; then
+    stty min 0 time 1 2>/dev/null || true
+    read -r -s -n2 subkey 2>/dev/null || true
+    stty min 1 time 0 2>/dev/null || true
+    case "$subkey" in
+      "[A"|"OA") echo "UP" ;;
+      "[B"|"OB") echo "DOWN" ;;
+      "[C"|"OC") echo "RIGHT" ;;
+      "[D"|"OD") echo "LEFT" ;;
+      *) echo "ESC" ;;
+    esac
+  elif [[ "$key" == "" ]]; then
+    echo "ENTER"
+  elif [[ "$key" == " " ]]; then
+    echo "SPACE"
+  elif [[ "$key" == "k" ]]; then
+    echo "UP"
+  elif [[ "$key" == "j" ]]; then
+    echo "DOWN"
+  elif [[ "$key" =~ [1-9] ]]; then
+    echo "NUM_$key"
+  else
+    echo "OTHER"
+  fi
+}
+
+RADIO_INDEX=0
+RADIO_VALUE=""
+
+prompt_radio_menu() {
+  local title="$1"
+  local default_idx="$2"
+  shift 2
+  local options=("$@")
+  local num_options=${#options[@]}
+  local current=$default_idx
+
+  if [ -n "$TERM" ] && [ -t 0 ]; then
+    OLD_STTY=$(stty -g 2>/dev/null)
+    stty -echo -icanon min 1 time 0 2>/dev/null || true
+  fi
+
+  echo -ne "\033[?25l" # Hide cursor
+
+  local rendered=false
+  local total_lines=$((num_options + 2))
+
+  while true; do
+    if [ "$rendered" = true ]; then
+      echo -ne "\033[${total_lines}A"
+    fi
+
+    echo -e "${BOLD}${CYAN}$title${RESET}\033[K"
+    for i in "${!options[@]}"; do
+      local opt="${options[$i]}"
+      if [ "$i" -eq "$current" ]; then
+        echo -e "  ${CYAN}❯${RESET} ${BOLD}${GREEN}(*) $opt${RESET}\033[K"
+      else
+        echo -e "    ${BLUE}( )${RESET} $opt\033[K"
+      fi
+    done
+    echo -e "${YELLOW}(Use ↑/↓ or j/k to navigate, Enter to select)${RESET}\033[K"
+    rendered=true
+
+    local key
+    key=$(read_key)
+    case "$key" in
+      UP)
+        current=$(( (current - 1 + num_options) % num_options ))
+        ;;
+      DOWN)
+        current=$(( (current + 1) % num_options ))
+        ;;
+      NUM_*)
+        local idx=${key#NUM_}
+        idx=$((idx - 1))
+        if [ "$idx" -ge 0 ] && [ "$idx" -lt "$num_options" ]; then
+          current=$idx
+        fi
+        ;;
+      ENTER|SPACE)
+        break
+        ;;
+    esac
+  done
+
+  if [ "$rendered" = true ]; then
+    echo -ne "\033[${total_lines}A"
+    for ((l=0; l<total_lines; l++)); do
+      echo -ne "\033[2K\r\033[B"
+    done
+    echo -ne "\033[${total_lines}A"
+  fi
+
+  cleanup_tui
+
+  RADIO_INDEX=$current
+  RADIO_VALUE="${options[$current]}"
+}
+
+prompt_checkbox_menu() {
+  local title="$1"
+  shift 1
+  local options=(
+    "Routing (@lit-labs/router)"
+    "Lit Context (@lit/context)"
+    "Preact Signals & IndexedDB Stores (@lit-labs/preact-signals)"
+    "Signals Showcase (Todo List Component & Store)"
+    "Generic Card Component & Examples Page"
+    "Chart.js Wrapper Component & Examples Page"
+    "App Shell Header Component"
+    "Theme Switcher Component"
+    "Micro-Frontend (MFE) Loader Utility"
+  )
+  local num_options=${#options[@]}
+  local current=0
+  local status_msg=""
+
+  # Default state: all features checked
+  local checked_states=(1 1 1 1 1 1 1 1 1)
+
+  enforce_deps() {
+    # Rule: If Routing (0) is selected, Context (1) MUST be enabled
+    if [ "${checked_states[0]}" -eq 1 ]; then
+      checked_states[1]=1
+    fi
+    # Rule: If Todos Showcase (3) is selected, Signals (2) MUST be enabled
+    if [ "${checked_states[3]}" -eq 1 ]; then
+      checked_states[2]=1
+    fi
+  }
+
+  enforce_deps
+
+  if [ -n "$TERM" ] && [ -t 0 ]; then
+    OLD_STTY=$(stty -g 2>/dev/null)
+    stty -echo -icanon min 1 time 0 2>/dev/null || true
+  fi
+
+  echo -ne "\033[?25l" # Hide cursor
+
+  local rendered=false
+  local total_lines=$((num_options + 3))
+
+  while true; do
+    if [ "$rendered" = true ]; then
+      echo -ne "\033[${total_lines}A"
+    fi
+
+    echo -e "${BOLD}${CYAN}$title${RESET}\033[K"
+    for i in "${!options[@]}"; do
+      local opt="${options[$i]}"
+      local chk="${checked_states[$i]}"
+      local lock_info=""
+
+      if [ "$i" -eq 1 ] && [ "${checked_states[0]}" -eq 1 ]; then
+        lock_info=" ${YELLOW}(required by Routing)${RESET}"
+      elif [ "$i" -eq 2 ] && [ "${checked_states[3]}" -eq 1 ]; then
+        lock_info=" ${YELLOW}(required by Todos Showcase)${RESET}"
+      fi
+
+      local box_str="[ ]"
+      if [ "$chk" -eq 1 ]; then
+        box_str="${GREEN}[X]${RESET}"
+      else
+        box_str="[ ]"
+      fi
+
+      if [ "$i" -eq "$current" ]; then
+        echo -e "  ${CYAN}❯${RESET} ${BOLD}${box_str} ${opt}${RESET}${lock_info}\033[K"
+      else
+        echo -e "    ${box_str} ${opt}${lock_info}\033[K"
+      fi
+    done
+
+    if [ -n "$status_msg" ]; then
+      echo -e "${YELLOW}⚠ $status_msg${RESET}\033[K"
+    else
+      echo -e "\033[K"
+    fi
+
+    echo -e "${YELLOW}(Use ↑/↓ or j/k to navigate, Space to toggle, Enter to confirm)${RESET}\033[K"
+    rendered=true
+
+    status_msg=""
+    local key
+    key=$(read_key)
+    case "$key" in
+      UP)
+        current=$(( (current - 1 + num_options) % num_options ))
+        ;;
+      DOWN)
+        current=$(( (current + 1) % num_options ))
+        ;;
+      NUM_*)
+        local idx=${key#NUM_}
+        idx=$((idx - 1))
+        if [ "$idx" -ge 0 ] && [ "$idx" -lt "$num_options" ]; then
+          current=$idx
+        fi
+        ;;
+      SPACE)
+        if [ "$current" -eq 1 ] && [ "${checked_states[0]}" -eq 1 ]; then
+          status_msg="Lit Context is required when Routing is enabled."
+        elif [ "$current" -eq 2 ] && [ "${checked_states[3]}" -eq 1 ]; then
+          status_msg="Preact Signals is required when Todos Showcase is enabled."
+        else
+          checked_states[$current]=$(( 1 - checked_states[$current] ))
+          enforce_deps
+        fi
+        ;;
+      ENTER)
+        break
+        ;;
+    esac
+  done
+
+  if [ "$rendered" = true ]; then
+    echo -ne "\033[${total_lines}A"
+    for ((l=0; l<total_lines; l++)); do
+      echo -ne "\033[2K\r\033[B"
+    done
+    echo -ne "\033[${total_lines}A"
+  fi
+
+  cleanup_tui
+
+  ENABLE_ROUTER=$([ "${checked_states[0]}" -eq 1 ] && echo true || echo false)
+  ENABLE_CONTEXT=$([ "${checked_states[1]}" -eq 1 ] && echo true || echo false)
+  ENABLE_SIGNALS=$([ "${checked_states[2]}" -eq 1 ] && echo true || echo false)
+  ENABLE_TODOS=$([ "${checked_states[3]}" -eq 1 ] && echo true || echo false)
+  ENABLE_CARDS=$([ "${checked_states[4]}" -eq 1 ] && echo true || echo false)
+  ENABLE_CHARTS=$([ "${checked_states[5]}" -eq 1 ] && echo true || echo false)
+  ENABLE_HEADER=$([ "${checked_states[6]}" -eq 1 ] && echo true || echo false)
+  ENABLE_THEME_SWITCHER=$([ "${checked_states[7]}" -eq 1 ] && echo true || echo false)
+  ENABLE_MFE_LOADER=$([ "${checked_states[8]}" -eq 1 ] && echo true || echo false)
+}
+
 prompt_user() {
   log_title "Lit Element App Shell Generator"
 
@@ -151,14 +414,13 @@ prompt_user() {
     echo -e "Creating app: ${BOLD}${CYAN}$APP_NAME${RESET}\n"
   fi
 
-  echo -e "\nChoose starter template preset:"
-  echo "  1) Full App Shell (Header, Navigation, Router, Contexts, Signals, Todos Showcase, Cards, Charts, MFEs)"
-  echo "  2) Blank App Shell (Minimal Lit App Host)"
-  echo "  3) Custom Selection (Select specific features interactively)"
-  read -rp "Selection [1-3] (default: 1): " template_choice
+  prompt_radio_menu "Choose starter template preset:" 0 \
+    "Full App Shell (Header, Navigation, Router, Contexts, Signals, Todos Showcase, Cards, Charts, MFEs)" \
+    "Blank App Shell (Minimal Lit App Host)" \
+    "Custom Selection (Select specific features interactively)"
 
-  case $template_choice in
-    2)
+  case $RADIO_INDEX in
+    1)
       TEMPLATE="blank"
       ENABLE_ROUTER=false
       ENABLE_CONTEXT=false
@@ -169,48 +431,13 @@ prompt_user() {
       ENABLE_TODOS=false
       ENABLE_CARDS=false
       ENABLE_CHARTS=false
+      log_success "Template preset: Blank App Shell"
       ;;
-    3)
+    2)
       TEMPLATE="custom"
-      read -rp "Enable Routing (@lit-labs/router)? [Y/n]: " ans
-      if [[ "$ans" =~ ^[Nn] ]]; then
-        ENABLE_ROUTER=false
-      else
-        ENABLE_ROUTER=true
-        ENABLE_CONTEXT=true
-        log_info "Lit Context (@lit/context) automatically enabled for Routing."
-      fi
-
-      if [ "$ENABLE_ROUTER" = false ]; then
-        read -rp "Enable Lit Context (@lit/context)? [Y/n]: " ans
-        [[ "$ans" =~ ^[Nn] ]] && ENABLE_CONTEXT=false || ENABLE_CONTEXT=true
-      fi
-
-      read -rp "Enable Preact Signals & IndexedDB Stores (@lit-labs/preact-signals)? [Y/n]: " ans
-      [[ "$ans" =~ ^[Nn] ]] && ENABLE_SIGNALS=false || ENABLE_SIGNALS=true
-
-      read -rp "Include Signals Showcase (Todo List Component & Store)? [Y/n]: " ans
-      if [[ "$ans" =~ ^[Nn] ]]; then
-        ENABLE_TODOS=false
-      else
-        ENABLE_TODOS=true
-        ENABLE_SIGNALS=true
-      fi
-
-      read -rp "Include Generic Card Component & Examples Page? [Y/n]: " ans
-      [[ "$ans" =~ ^[Nn] ]] && ENABLE_CARDS=false || ENABLE_CARDS=true
-
-      read -rp "Include Chart.js Wrapper Component & Examples Page? [Y/n]: " ans
-      [[ "$ans" =~ ^[Nn] ]] && ENABLE_CHARTS=false || ENABLE_CHARTS=true
-
-      read -rp "Enable App Shell Header component? [Y/n]: " ans
-      [[ "$ans" =~ ^[Nn] ]] && ENABLE_HEADER=false || ENABLE_HEADER=true
-
-      read -rp "Enable Theme Switcher component? [Y/n]: " ans
-      [[ "$ans" =~ ^[Nn] ]] && ENABLE_THEME_SWITCHER=false || ENABLE_THEME_SWITCHER=true
-
-      read -rp "Enable Micro-Frontend (MFE) Loader utility? [Y/n]: " ans
-      [[ "$ans" =~ ^[Nn] ]] && ENABLE_MFE_LOADER=false || ENABLE_MFE_LOADER=true
+      log_success "Template preset: Custom Selection"
+      prompt_checkbox_menu "Select features to include in your App Shell:"
+      log_success "Custom features configured."
       ;;
     *)
       TEMPLATE="full"
@@ -223,17 +450,31 @@ prompt_user() {
       ENABLE_TODOS=true
       ENABLE_CARDS=true
       ENABLE_CHARTS=true
+      log_success "Template preset: Full App Shell"
       ;;
   esac
 
-  read -rp "Choose package manager [yarn/npm] (default: yarn): " pm_choice
-  PACKAGE_MANAGER=${pm_choice:-yarn}
+  prompt_radio_menu "Choose package manager:" 0 "yarn" "npm" "pnpm"
+  PACKAGE_MANAGER="$RADIO_VALUE"
+  log_success "Package manager selected: $PACKAGE_MANAGER"
 
-  read -rp "Initialize Git repository? [Y/n]: " git_ans
-  [[ "$git_ans" =~ ^[Nn] ]] && INIT_GIT=false || INIT_GIT=true
+  prompt_radio_menu "Initialize Git repository?" 0 "Yes (Initialize Git repository)" "No"
+  if [ "$RADIO_INDEX" -eq 0 ]; then
+    INIT_GIT=true
+    log_success "Git repository: Yes"
+  else
+    INIT_GIT=false
+    log_success "Git repository: No"
+  fi
 
-  read -rp "Run dependency installation now? [y/N]: " install_ans
-  [[ "$install_ans" =~ ^[Yy] ]] && RUN_INSTALL=true || RUN_INSTALL=false
+  prompt_radio_menu "Run dependency installation now?" 0 "No (Skip dependency installation)" "Yes (Install dependencies now)"
+  if [ "$RADIO_INDEX" -eq 1 ]; then
+    RUN_INSTALL=true
+    log_success "Install dependencies: Yes"
+  else
+    RUN_INSTALL=false
+    log_success "Install dependencies: No"
+  fi
 }
 
 parse_args "$@"
