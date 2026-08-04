@@ -1,5 +1,11 @@
 # @quincarter/create-lit-app
 
+## 1.1.2
+
+### Patch Changes
+
+- Adding readme generation to the final script
+
 ## 1.1.1
 
 ### Patch Changes

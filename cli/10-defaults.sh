@@ -1,0 +1,16 @@
+# Default Configuration Variables
+APP_NAME=""
+TEMPLATE="full" # full | blank | custom
+ENABLE_ROUTER=true
+ENABLE_CONTEXT=true
+ENABLE_SIGNALS=true
+ENABLE_HEADER=true
+ENABLE_THEME_SWITCHER=true
+ENABLE_MFE_LOADER=true
+ENABLE_TODOS=true
+ENABLE_CARDS=true
+ENABLE_CHARTS=true
+PACKAGE_MANAGER="yarn"
+INIT_GIT=true
+RUN_INSTALL=false
+NON_INTERACTIVE=false
