@@ -36,7 +36,6 @@ console.log("✔ Assembled create-app-shell.sh successfully.");
 
 console.log("🔨 Compiling bin/create-lit-app.ts -> bin/create-lit-app.js...");
 const binContent: string = readFileSync(binTsFile, "utf-8");
-// Simple transpilation/copy for bin entry point (or compilation via tsc)
 writeFileSync(binJsFile, binContent, "utf-8");
 chmodSync(binJsFile, 0o755);
 console.log("✔ bin/create-lit-app.js compiled successfully.");

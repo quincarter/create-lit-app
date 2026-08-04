@@ -12,6 +12,6 @@ const child = spawn("bash", [scriptPath, ...process.argv.slice(2)], {
 	stdio: "inherit",
 });
 
-child.on("exit", (code: number | null) => {
+child.on("exit", (code) => {
 	process.exit(code ?? 0);
 });
