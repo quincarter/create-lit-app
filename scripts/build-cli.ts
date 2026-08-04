@@ -11,6 +11,9 @@ const outputFile: string = join(rootDir, "create-app-shell.sh");
 const binTsFile: string = join(rootDir, "bin", "create-lit-app.ts");
 const binJsFile: string = join(rootDir, "bin", "create-lit-app.js");
 
+console.log("🔨 Executing scripts/create-readme.ts to generate README generator module...");
+execSync("npx tsx scripts/create-readme.ts", { stdio: "inherit", cwd: rootDir });
+
 console.log("🔨 Building create-app-shell.sh from cli/ modules...");
 
 const files: string[] = readdirSync(cliDir)
