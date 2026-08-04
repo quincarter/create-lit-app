@@ -1,5 +1,11 @@
 # @quincarter/create-lit-app
 
+## 1.1.3
+
+### Patch Changes
+
+- fixing bug
+
 ## 1.1.2
 
 ### Patch Changes
