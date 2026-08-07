@@ -59,7 +59,6 @@ export const ViewMixin = <T extends Constructor<LitElement>>(superClass: T) => {
 
 		connectedCallback(): void {
 			super.connectedCallback();
-			this.featureIsEnabled = true;
 			this.mfeLoader?.init();
 		}
 

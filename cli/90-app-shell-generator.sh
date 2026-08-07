@@ -20,7 +20,14 @@ if [ "$ENABLE_CONTEXT" = true ]; then
   IMPORTS="$IMPORTS
 import { provide } from '@lit/context';
 import { AccessesContext } from './shared/contexts/accesses.context';
-import { NavigationContext } from './shared/contexts/navigation.context';
+import { NavigationContext } from './shared/contexts/navigation.context';"
+fi
+
+# MFE loader context is provided independently of ENABLE_CONTEXT so the
+# micro-frontend (MFE) utility works even when context features are off.
+if [ "$ENABLE_MFE_LOADER" = true ]; then
+  IMPORTS="$IMPORTS
+import { provide } from '@lit/context';
 import { MfeLoaderContext } from './shared/contexts/mfe-loader.context';"
 fi
 
@@ -62,13 +69,16 @@ cat <<EOF >> src/app-shell.ts
   @property({ type: Array })
   accesses: string[] = ["public"];
 EOF
-  if [ "$ENABLE_MFE_LOADER" = true ]; then
+fi
+
+# Provide the MFE loader independently of ENABLE_CONTEXT so that the MFE
+# utility initializes even when context features are disabled.
+if [ "$ENABLE_MFE_LOADER" = true ]; then
 cat <<EOF >> src/app-shell.ts
   @provide({ context: MfeLoaderContext })
   @state()
   mfeLoader = new MfeLoader(MFE_LOADER_CONFIG);
 EOF
-  fi
 fi
 
 if [ "$ENABLE_ROUTER" = true ]; then
@@ -88,6 +98,14 @@ EOF
 if [ "$ENABLE_ROUTER" = true ]; then
 cat <<EOF >> src/app-shell.ts
     await this._setupRoutes();
+EOF
+fi
+
+# Initialize the MFE loader at the shell level (independent of ENABLE_CONTEXT)
+# so micro-frontend bundles are injected regardless of context feature state.
+if [ "$ENABLE_MFE_LOADER" = true ]; then
+cat <<EOF >> src/app-shell.ts
+    await this.mfeLoader?.init();
 EOF
 fi
 
