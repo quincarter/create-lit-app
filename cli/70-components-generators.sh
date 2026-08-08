@@ -101,10 +101,12 @@ export class AppShellHeader extends LitElement {
         ${
 					this.routes.length > 0
 						? html`<ul>
-                ${this.routes.map(
-									(route) =>
-										html`<li><a href="${withBase(route.path)}">${route.name}</a></li>`,
-								)}
+                ${this.routes
+									.filter((route) => route.userHasPermission !== false)
+									.map(
+										(route) =>
+											html`<li><a href="${withBase(route.path)}">${route.name}</a></li>`,
+									)}
               </ul>`
 						: nothing
 				}

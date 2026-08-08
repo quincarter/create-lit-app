@@ -29,7 +29,7 @@ export const routesBuilt = (
 		children: navItem.children?.map((child: NavItem) => ({
 			...child,
 			icon: child.icon || ("" as IconType),
-			userHasPermission: getAccessPermissions(navItem, accesses),
+			userHasPermission: getAccessPermissions(child, accesses),
 		})),
 	}));
 };

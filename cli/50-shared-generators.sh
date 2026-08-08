@@ -166,7 +166,7 @@ if [ "$ENABLE_ROUTER" = true ]; then
 		directory: \"todos-page\",
 		component: \"todos-page\",
 		filePath: \"../../views/todos-page/todos-page.ts\",
-		levelOfAccess: [\"public\"],
+		levelOfAccess: [\"private\"],
 		tagName: \"todos-page\",
 		isMfe: false,
 	}"
@@ -252,6 +252,11 @@ export const routesBuilt = (
 		icon: navItem.icon || ("" as IconType),
 		mfeComponent: getMfeComponent(navItem.tagName),
 		userHasPermission: getAccessPermissions(navItem, accesses),
+		children: navItem.children?.map((child: NavItem) => ({
+			...child,
+			icon: child.icon || ("" as IconType),
+			userHasPermission: getAccessPermissions(child, accesses),
+		})),
 	}));
 };
 EOF
