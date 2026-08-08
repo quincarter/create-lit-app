@@ -75,7 +75,7 @@ export const ViewMixin = <T extends Constructor<LitElement>>(superClass: T) => {
 				return this.renderUnderConstruction();
 			}
 
-			if (customTemplate) return html`${customTemplate}`;
+			if (customTemplate && this.featureIsEnabled) return html`${customTemplate}`;
 
 			return html`${
 				this.featureIsEnabled && this.isMfe

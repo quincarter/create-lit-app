@@ -14,7 +14,10 @@ EOF
 IMPORTS="import { type HTMLTemplateResult, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { AppShellStyles } from './app-shell.styles';
-import type { NavItem } from './shared/interfaces/navigation.interface';"
+import type { NavItem } from './shared/interfaces/navigation.interface';
+import \"./shared/internal-views/404-not-found/page-not-found\";
+import \"./shared/internal-views/no-access/no-access\";
+import \"./shared/internal-views/under-construction/under-construction\";"
 
 if [ "$ENABLE_CONTEXT" = true ]; then
   IMPORTS="$IMPORTS
@@ -36,9 +39,10 @@ if [ "$ENABLE_ROUTER" = true ]; then
 import { Router } from '@lit-labs/router';
 import { html as staticHtml, unsafeStatic } from 'lit/static-html.js';
 import 'urlpattern-polyfill';
-import { navigationRouting } from './shared/configuration/nav';
+import { navigationRouting, sidePages } from './shared/configuration/nav';
 import { routesBuilt } from './shared/configuration/routes';
-import { withBase } from './shared/configuration/base-path';"
+import { withBase } from './shared/configuration/base-path';
+import { AppRootUtilities } from './shared/utilities/app-root.utility';"
 fi
 
 if [ "$ENABLE_HEADER" = true ]; then
@@ -69,6 +73,24 @@ cat <<EOF >> src/app-shell.ts
   @property({ type: Array })
   accesses: string[] = ["public"];
 EOF
+else
+cat <<EOF >> src/app-shell.ts
+  @property({ type: Array })
+  routing: NavItem[] = [];
+
+  @property({ type: Array })
+  accesses: string[] = ["public"];
+EOF
+fi
+
+if [ "$ENABLE_ROUTER" = true ]; then
+cat <<EOF >> src/app-shell.ts
+  @state()
+  navRoutes: NavItem[] = [] as NavItem[];
+
+  @state()
+  notAllowedRouteList: NavItem[] = [];
+EOF
 fi
 
 # Provide the MFE loader independently of ENABLE_CONTEXT so that the MFE
@@ -97,6 +119,7 @@ EOF
 
 if [ "$ENABLE_ROUTER" = true ]; then
 cat <<EOF >> src/app-shell.ts
+    this.navRoutes = this._buildNavBarRoutes(navigationRouting);
     await this._setupRoutes();
 EOF
 fi
@@ -116,8 +139,20 @@ EOF
 if [ "$ENABLE_ROUTER" = true ]; then
 cat <<EOF >> src/app-shell.ts
 
+  private _buildNavBarRoutes(navItems: NavItem[]): NavItem[] {
+    const navi = routesBuilt(navItems, this.accesses);
+    const { notAllowed, navItems: filtered } =
+      AppRootUtilities.getNotAllowedRoutes(navi, this.notAllowedRouteList);
+    this.notAllowedRouteList = notAllowed;
+    return filtered;
+  }
+
   private async _setupRoutes(): Promise<void> {
-    this.routing = routesBuilt(navigationRouting, ["public"]);
+    const detailRoutes = this._buildNavBarRoutes([...sidePages]);
+    this.routing = routesBuilt(
+      [...this.navRoutes, ...this.notAllowedRouteList, ...detailRoutes],
+      this.accesses,
+    );
     const routeConfigs = this.routing.map((navItem) => ({
       path: withBase(navItem.path),
       enter: async () => {
@@ -130,8 +165,8 @@ cat <<EOF >> src/app-shell.ts
       },
     }));
 
-    const firstPath = navigationRouting[0]?.path || "/home";
-    const firstItem = navigationRouting[0];
+    const firstPath = this.navRoutes[0]?.path || "/home";
+    const firstItem = this.navRoutes[0];
 
     this._router.routes = [
       {
@@ -165,7 +200,7 @@ EOF
 
 if [ "$ENABLE_HEADER" = true ]; then
 cat <<EOF >> src/app-shell.ts
-      <app-shell-header .routes="\${this.routing}" enable-theme-switcher>
+      <app-shell-header .routes="\${this.navRoutes}" enable-theme-switcher>
         <main>
 EOF
 else

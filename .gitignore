@@ -2,3 +2,4 @@ node_modules/
 .DS_Store
 create-app-shell.sh
 bin/create-lit-app.js
+.history

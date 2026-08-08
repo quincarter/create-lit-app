@@ -21,10 +21,12 @@ export class AppShellHeader extends LitElement {
 				? html`<nav>
             <a href="${withBase("/home")}"><img class="logo" src="${logoPng}" alt="logo" /></a>
             <ul>
-              ${this.routes.map(
-								(route) =>
-									html`<li><a href="${withBase(route.path)}">${route.name}</a></li>`,
-							)}
+              ${this.routes
+								.filter((route) => route.userHasPermission !== false)
+								.map(
+									(route) =>
+										html`<li><a href="${withBase(route.path)}">${route.name}</a></li>`,
+								)}
             </ul>
             ${
 							this.enableThemeSwitcher
