@@ -1,5 +1,11 @@
 # @quincarter/create-lit-app
 
+## 1.1.6
+
+### Patch Changes
+
+- fixed permissions issues again
+
 ## 1.1.5
 
 ### Patch Changes

@@ -6,6 +6,7 @@ import { CardPageStyles } from "./card-page.styles";
 
 @customElement("card-examples")
 export class CardExamples extends ViewMixin(LitElement) {
+	tagName = "card-examples";
 	featureIsEnabled = false;
 	isMfe = false;
 
