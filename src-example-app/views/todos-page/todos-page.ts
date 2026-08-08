@@ -5,6 +5,7 @@ import { TodosPageStyles } from "./todos-page.styles";
 
 @customElement("todos-page")
 export class TodosPage extends ViewMixin(LitElement) {
+	tagName = "todos-page";
 	featureIsEnabled = false;
 	isMfe = false;
 

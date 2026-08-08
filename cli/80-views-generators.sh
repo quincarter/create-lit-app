@@ -127,6 +127,7 @@ import "../../components/todos/todo-list/todo-list";
 
 @customElement("todos-page")
 export class TodosPage extends ViewMixin(LitElement) {
+	tagName = "todos-page";
 	featureIsEnabled = true;
 	isMfe = false;
 	static styles = [TodosPageStyles];
@@ -155,6 +156,7 @@ import "../../components/card/generic-card";
 
 @customElement("card-examples")
 export class CardExamples extends ViewMixin(LitElement) {
+	tagName = "card-examples";
 	featureIsEnabled = true;
 	isMfe = false;
 	static styles = [CardPageStyles];
@@ -183,6 +185,7 @@ import "../../components/chart-js/chart-js";
 
 @customElement("chart-examples")
 export class ChartExamples extends ViewMixin(LitElement) {
+	tagName = "chart-examples";
 	featureIsEnabled = true;
 	isMfe = false;
 

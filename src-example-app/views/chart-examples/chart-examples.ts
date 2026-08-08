@@ -4,6 +4,7 @@ import { ViewMixin } from "../view.mixin";
 
 @customElement("chart-examples")
 export class ChartExamples extends ViewMixin(LitElement) {
+	tagName = "chart-examples";
 	featureIsEnabled = false;
 	isMfe = false;
 
