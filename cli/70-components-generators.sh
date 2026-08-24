@@ -167,8 +167,6 @@ fi
 if [ "$ENABLE_CHARTS" = true ]; then
 mkdir -p src/components/chart-js
 cat <<'EOF' > src/components/chart-js/chart-js.utility.ts
-import colorLib, { type Color, type RGBA } from "@kurkle/color";
-import { DateTime } from "luxon";
 import "chartjs-adapter-luxon";
 
 var _seed = Date.now();

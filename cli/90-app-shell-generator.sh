@@ -30,7 +30,6 @@ fi
 # micro-frontend (MFE) utility works even when context features are off.
 if [ "$ENABLE_MFE_LOADER" = true ]; then
   IMPORTS="$IMPORTS
-import { provide } from '@lit/context';
 import { MfeLoaderContext } from './shared/contexts/mfe-loader.context';"
 fi
 
