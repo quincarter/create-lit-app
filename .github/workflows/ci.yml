@@ -1,0 +1,54 @@
+name: CI
+
+# Builds the generator CLI and scaffolds a sample app so the full
+# lint/format/build/test gate runs on every PR (and push to main). The root
+# package is a generator, so the lint/format/test checks are exercised against
+# the app it produces rather than against the repo root.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+  scaffold-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Scaffold a sample app and run the full gate
+        run: |
+          node bin/create-lit-app.js sample-app --pm=npm --no-git --no-install -y
+          cd sample-app
+          npm install --no-audit --no-fund
+          npx biome format --write .
+          npx biome lint .
+          npm run build
+          npm test

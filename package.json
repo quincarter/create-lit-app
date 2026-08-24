@@ -26,9 +26,9 @@
     "README.md"
   ],
   "devDependencies": {
-    "@changesets/cli": "^2.27.1",
-    "@types/node": "^26.1.2",
-    "tsx": "^4.23.1",
+    "@changesets/cli": "^3.0.1",
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   },
   "keywords": [
