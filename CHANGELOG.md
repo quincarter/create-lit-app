@@ -1,5 +1,11 @@
 # @quincarter/create-lit-app
 
+## 1.1.7
+
+### Patch Changes
+
+- 817b445: Bump dependencies to latest (vite 8, vitest 4, typescript 7, vite-plugin-pwa 1, biome 2.5) and fix generated-app lint/format issues
+
 ## 1.1.6
 
 ### Patch Changes
