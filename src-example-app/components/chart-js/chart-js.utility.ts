@@ -1,5 +1,3 @@
-import colorLib, { type Color, type RGBA } from "@kurkle/color";
-import { DateTime } from "luxon";
 import "chartjs-adapter-luxon";
 
 // Adapted from http://indiegamr.com/generate-repeatable-random-numbers-in-js/
@@ -135,14 +133,6 @@ export function color(index: number) {
 	return COLORS[index % COLORS.length];
 }
 
-export function transparentize(
-	value: string | number[] | Color | RGBA,
-	opacity: number | undefined,
-) {
-	var alpha = opacity === undefined ? 0.5 : 1 - opacity;
-	return colorLib(value).alpha(alpha).rgbString();
-}
-
 export const CHART_COLORS = {
 	red: "rgb(255, 99, 132)",
 	orange: "rgb(255, 159, 64)",
@@ -165,16 +155,4 @@ const NAMED_COLORS = [
 
 export function namedColor(index: number) {
 	return NAMED_COLORS[index % NAMED_COLORS.length];
-}
-
-export function newDate(days: number) {
-	return DateTime.now().plus({ days }).toJSDate();
-}
-
-export function newDateString(days: number) {
-	return DateTime.now().plus({ days }).toISO();
-}
-
-export function parseISODate(str: string) {
-	return DateTime.fromISO(str);
 }

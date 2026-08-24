@@ -42,13 +42,13 @@ cat <<EOF > package.json
     $DEPS
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.5",
-    "@types/luxon": "^3.7.2",
+    "@biomejs/biome": "^2.5.10",
+    "@types/luxon": "^3.7.5",
     "@types/mocha": "^10.0.10",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11",
-    "vite-plugin-pwa": "^0.20.0",
-    "vitest": "^1.6.0"
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "vite-plugin-pwa": "^1.3.0",
+    "vitest": "^4.1.11"
   }
 }
 EOF
@@ -93,14 +93,18 @@ EOF
 
 cat <<'EOF' > biome.json
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-  "organizeImports": {
-    "enabled": true
+  "$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "preset": "recommended"
     }
   },
   "formatter": {
@@ -178,4 +182,17 @@ EOF
 
 cat <<'EOF' > src/vite-env.d.ts
 /// <reference types="vite/client" />
+EOF
+
+# ------------------------------------------------------------------------------
+# Generate a smoke test so `npm test` (vitest run) has at least one passing test
+# ------------------------------------------------------------------------------
+cat <<'EOF' > src/base-path.test.ts
+import { expect, test } from "vitest";
+import { withBase } from "./shared/configuration/base-path";
+
+test("withBase normalizes the leading slash", () => {
+  expect(withBase("home")).toBe(withBase("/home"));
+  expect(withBase("a/b")).toBe(withBase("/a/b"));
+});
 EOF
