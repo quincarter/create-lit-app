@@ -3,3 +3,5 @@ node_modules/
 create-app-shell.sh
 bin/create-lit-app.js
 .history
+# Local npm auth (never commit — carries publish tokens)
+.npmrc
