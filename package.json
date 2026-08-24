@@ -13,7 +13,7 @@
     "prepublishOnly": "npm run build",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "changeset publish"
+    "release": "changeset publish && git push --tags && tsx scripts/sync-releases.ts"
   },
   "man": "./man/create-lit-app.1",
   "publishConfig": {
