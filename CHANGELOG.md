@@ -1,5 +1,11 @@
 # @quincarter/create-lit-app
 
+## 1.2.0
+
+### Minor Changes
+
+- Replace Biome with OXC tooling (`oxfmt` and `oxlint`) for code formatting and linting in scaffolded projects.
+
 ## 1.1.7
 
 ### Patch Changes

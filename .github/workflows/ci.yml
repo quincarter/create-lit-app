@@ -48,7 +48,7 @@ jobs:
           node bin/create-lit-app.js sample-app --pm=npm --no-git --no-install -y
           cd sample-app
           npm install --no-audit --no-fund
-          npx biome format --write .
-          npx biome lint .
+          npm run fmt
+          npm run lint
           npm run build
           npm test
