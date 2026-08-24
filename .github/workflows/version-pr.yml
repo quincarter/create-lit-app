@@ -1,0 +1,49 @@
+name: Version Packages
+
+# Opens/updates a "Version Packages" PR whenever a pending .changeset/*.md file
+# lands on main. Merging that PR runs `changeset version` (bumps package.json +
+# CHANGELOG) and then publishes to npm, since create-lit-app is a published npm
+# package (unlike the HACS-only source project this was adapted from).
+#
+# Required repo secret: NPM_TOKEN (automation/publish token from npmjs.com).
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  version-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # changeset publish invokes `npm publish`, which reads the token from .npmrc.
+      - name: Write npm auth token for publishing
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+
+      - name: Version packages and publish to npm
+        uses: changesets/action@v1
+        with:
+          version: npm run version-packages
+          publish: npm run release
+          title: "chore: version packages"
+          commit: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
