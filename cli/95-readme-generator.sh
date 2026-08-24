@@ -191,7 +191,8 @@ $TREE
 
 ## 🎨 Code Style & Tooling
 
-- **Linting & Formatting**: Biome (\`npx @biomejs/biome check .\`)
+- **Formatting**: oxfmt (\`$RUN_CMD fmt\` / \`$RUN_CMD fmt:check\`)
+- **Linting**: oxlint (\`$RUN_CMD lint\` / \`$RUN_CMD lint:fix\`)
 - **Type Checking**: TypeScript (\`npx tsc --noEmit\`)
 EOF
 

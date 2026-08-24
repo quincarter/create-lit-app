@@ -36,15 +36,20 @@ cat <<EOF > package.json
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "yarn build && vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
   },
   "dependencies": {
     $DEPS
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.10",
     "@types/luxon": "^3.7.5",
     "@types/mocha": "^10.0.10",
+    "oxfmt": "^0.65.0",
+    "oxlint": "^1.80.0",
     "typescript": "^7.0.2",
     "vite": "^8.2.2",
     "vite-plugin-pwa": "^1.3.0",
@@ -56,7 +61,7 @@ EOF
 # ------------------------------------------------------------------------------
 # Generate Configuration Files
 # ------------------------------------------------------------------------------
-log_info "Generating configuration files (tsconfig.json, vite.config.ts, biome.json)..."
+log_info "Generating configuration files (tsconfig.json, vite.config.ts)..."
 
 cat <<'EOF' > tsconfig.json
 {
@@ -89,29 +94,6 @@ export default defineConfig({
     target: 'esnext',
   },
 });
-EOF
-
-cat <<'EOF' > biome.json
-{
-  "$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
-  "assist": {
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "preset": "recommended"
-    }
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "tab"
-  }
-}
 EOF
 
 cat <<'EOF' > .gitignore
