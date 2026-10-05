@@ -354,6 +354,19 @@ if [ "$ENABLE_TODOS" = true ]; then
   ENABLE_SIGNALS=true
 fi
 
+# The MFE loader is handed to views through @lit/context, so the package and
+# the loader context are needed even when the Context feature itself is off.
+USE_LIT_CONTEXT=false
+if [ "$ENABLE_CONTEXT" = true ] || [ "$ENABLE_MFE_LOADER" = true ]; then
+  USE_LIT_CONTEXT=true
+fi
+
+# APP_NAME becomes both the directory and the npm package name
+if [[ ! "$APP_NAME" =~ ^[a-z0-9][a-z0-9._-]*$ ]]; then
+  log_error "Invalid app name '$APP_NAME' (use lowercase letters, digits, '.', '_' and '-')."
+  exit 1
+fi
+
 TARGET_DIR="$(pwd)/$APP_NAME"
 
 if [ -d "$TARGET_DIR" ]; then

@@ -145,7 +145,7 @@ $(echo -e "$FEATURES")
 
 ### Prerequisites
 
-Node.js v18+ and \`$PACKAGE_MANAGER\`.
+Node.js 20.19+ (or 22.12+) and \`$PACKAGE_MANAGER\`.
 
 ### Installation
 

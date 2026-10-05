@@ -7,9 +7,16 @@ if [ "$INIT_GIT" = true ]; then
   log_success "Git repository initialized."
 fi
 
+# The templates are not written in oxfmt's style, so format once the
+# formatter is available to leave the new project passing `fmt:check`.
+install_deps() {
+  $PACKAGE_MANAGER install
+  $PACKAGE_MANAGER run fmt >/dev/null 2>&1 || log_warn "Could not format the project; run '$PACKAGE_MANAGER run fmt' manually."
+}
+
 if [ "$RUN_INSTALL" = true ]; then
   log_info "Installing dependencies with $PACKAGE_MANAGER..."
-  $PACKAGE_MANAGER install
+  install_deps
   log_success "Dependencies installed."
 fi
 
@@ -26,7 +33,7 @@ if [ "$NON_INTERACTIVE" = false ]; then
     cd "$TARGET_DIR" || exit 1
     if [ "$RUN_INSTALL" = false ]; then
       log_info "Installing dependencies first..."
-      $PACKAGE_MANAGER install
+      install_deps
     fi
     exec $PACKAGE_MANAGER start
   fi

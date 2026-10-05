@@ -9,9 +9,9 @@ const __dirname = dirname(__filename);
 const scriptPath = join(__dirname, "..", "create-app-shell.sh");
 
 const child = spawn("bash", [scriptPath, ...process.argv.slice(2)], {
-	stdio: "inherit",
+  stdio: "inherit",
 });
 
 child.on("exit", (code) => {
-	process.exit(code ?? 0);
+  process.exit(code ?? 0);
 });

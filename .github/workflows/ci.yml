@@ -27,10 +27,25 @@ jobs:
 
       - run: npm ci
 
+      - run: npm run fmt:check
+
+      - run: npm run lint
+
       - run: npm run build
 
   scaffold-check:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flags:
+          - ""
+          - "--template=blank"
+          - "--no-router"
+          - "--no-router --no-context"
+          - "--no-theme-switcher"
+          - "--no-header --no-mfe-loader"
+          - "--no-signals --no-todos --no-cards --no-charts"
     steps:
       - uses: actions/checkout@v4
 
@@ -45,7 +60,7 @@ jobs:
 
       - name: Scaffold a sample app and run the full gate
         run: |
-          node bin/create-lit-app.js sample-app --pm=npm --no-git --no-install -y
+          node bin/create-lit-app.js sample-app --pm=npm --no-git --no-install -y ${{ matrix.flags }}
           cd sample-app
           npm install --no-audit --no-fund
           npm run fmt

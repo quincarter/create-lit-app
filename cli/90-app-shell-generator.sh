@@ -11,17 +11,27 @@ export const AppShellStyles = css`
 `;
 EOF
 
+# @state is only used by the router/header nav list and the MFE loader
+DECORATORS="customElement, property"
+if [ "$ENABLE_ROUTER" = true ] || [ "$ENABLE_HEADER" = true ] || [ "$ENABLE_MFE_LOADER" = true ]; then
+  DECORATORS="$DECORATORS, state"
+fi
+
 IMPORTS="import { type HTMLTemplateResult, html, LitElement } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { $DECORATORS } from 'lit/decorators.js';
 import { AppShellStyles } from './app-shell.styles';
 import type { NavItem } from './shared/interfaces/navigation.interface';
 import \"./shared/internal-views/404-not-found/page-not-found\";
 import \"./shared/internal-views/no-access/no-access\";
 import \"./shared/internal-views/under-construction/under-construction\";"
 
+if [ "$USE_LIT_CONTEXT" = true ]; then
+  IMPORTS="$IMPORTS
+import { provide } from '@lit/context';"
+fi
+
 if [ "$ENABLE_CONTEXT" = true ]; then
   IMPORTS="$IMPORTS
-import { provide } from '@lit/context';
 import { AccessesContext } from './shared/contexts/accesses.context';
 import { NavigationContext } from './shared/contexts/navigation.context';"
 fi
@@ -82,10 +92,16 @@ cat <<EOF >> src/app-shell.ts
 EOF
 fi
 
-if [ "$ENABLE_ROUTER" = true ]; then
+# The header binds to navRoutes, so it exists even without the router
+if [ "$ENABLE_ROUTER" = true ] || [ "$ENABLE_HEADER" = true ]; then
 cat <<EOF >> src/app-shell.ts
   @state()
   navRoutes: NavItem[] = [] as NavItem[];
+EOF
+fi
+
+if [ "$ENABLE_ROUTER" = true ]; then
+cat <<EOF >> src/app-shell.ts
 
   @state()
   notAllowedRouteList: NavItem[] = [];
@@ -104,7 +120,9 @@ fi
 
 if [ "$ENABLE_ROUTER" = true ]; then
 cat <<EOF >> src/app-shell.ts
-  private _router = new Router(this, []);
+  private _router = new Router(this, [], {
+    fallback: { render: () => html\`<page-not-found></page-not-found>\` },
+  });
 EOF
 fi
 
@@ -198,8 +216,12 @@ cat <<EOF >> src/app-shell.ts
 EOF
 
 if [ "$ENABLE_HEADER" = true ]; then
+HEADER_ATTRS=""
+if [ "$ENABLE_THEME_SWITCHER" = true ]; then
+  HEADER_ATTRS=" enable-theme-switcher"
+fi
 cat <<EOF >> src/app-shell.ts
-      <app-shell-header .routes="\${this.navRoutes}" enable-theme-switcher>
+      <app-shell-header .routes="\${this.navRoutes}"$HEADER_ATTRS>
         <main>
 EOF
 else

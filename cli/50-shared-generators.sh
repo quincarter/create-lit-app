@@ -273,6 +273,8 @@ import { createContext } from "@lit/context";
 import type { NavItem } from "../interfaces/navigation.interface";
 export const NavigationContext = createContext<NavItem[]>("navContext");
 EOF
+fi
+if [ "$USE_LIT_CONTEXT" = true ]; then
 cat <<'EOF' > src/shared/contexts/mfe-loader.context.ts
 import { createContext } from "@lit/context";
 import type { MfeLoader } from "../utilities/mfe-loader.utility";

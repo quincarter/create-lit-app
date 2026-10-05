@@ -9,7 +9,7 @@ if [ "$ENABLE_ROUTER" = true ]; then
     \"@lit-labs/router\": \"^0.1.4\",
     \"urlpattern-polyfill\": \"^10.1.0\""
 fi
-if [ "$ENABLE_CONTEXT" = true ]; then
+if [ "$USE_LIT_CONTEXT" = true ]; then
   DEPS="$DEPS,
     \"@lit/context\": \"^1.1.6\""
 fi
@@ -23,7 +23,7 @@ if [ "$ENABLE_CHARTS" = true ]; then
     \"chart.js\": \"^4.5.1\",
     \"chartjs-adapter-luxon\": \"^1.3.1\",
     \"luxon\": \"^3.7.2\",
-    \"@kurkle/color\": \"^0.4.0\""
+    \"@kurkle/color\": \"^0.6.4\""
 fi
 
 cat <<EOF > package.json
@@ -35,7 +35,7 @@ cat <<EOF > package.json
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
-    "preview": "yarn build && vite preview",
+    "preview": "tsc && vite build && vite preview",
     "test": "vitest run",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
@@ -46,14 +46,14 @@ cat <<EOF > package.json
     $DEPS
   },
   "devDependencies": {
-    "@types/luxon": "^3.7.5",
+    "@types/luxon": "^3.7.6",
     "@types/mocha": "^10.0.10",
-    "oxfmt": "^0.65.0",
-    "oxlint": "^1.80.0",
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
     "typescript": "^7.0.2",
-    "vite": "^8.2.2",
-    "vite-plugin-pwa": "^1.3.0",
-    "vitest": "^4.1.11"
+    "vite": "^8.3.2",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.0.3"
   }
 }
 EOF

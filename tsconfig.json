@@ -9,8 +9,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": [
-    "scripts/**/*.ts",
-    "bin/**/*.ts"
-  ]
+  "include": ["scripts/**/*.ts", "bin/**/*.ts"]
 }

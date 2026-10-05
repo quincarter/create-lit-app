@@ -41,7 +41,7 @@ parse_args() {
       --no-install) RUN_INSTALL=false ;;
       -y|--yes) NON_INTERACTIVE=true ;;
       -v|--version)
-        echo "@quincarter/create-lit-app v1.0.12"
+        echo "@quincarter/create-lit-app v__CLI_VERSION__"
         exit 0
         ;;
       --help|-h)
@@ -82,6 +82,7 @@ parse_args() {
         exit 0
         ;;
       -*)
+        log_warn "Unknown option ignored: $arg"
         ;;
       *)
         if [ -z "$APP_NAME" ]; then

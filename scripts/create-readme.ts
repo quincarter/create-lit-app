@@ -14,7 +14,7 @@ const outputFile: string = join(cliDir, "95-readme-generator.sh");
  * based on selected features and package manager.
  */
 function buildReadmeGenerator(): string {
-	return `# ------------------------------------------------------------------------------
+  return `# ------------------------------------------------------------------------------
 # Generate README.md
 # ------------------------------------------------------------------------------
 log_info "Generating customized README.md..."
@@ -148,25 +148,25 @@ if [ "$ENABLE_ROUTER" = true ]; then
 fi
 
 cat <<EOF > README.md
-# \$APP_NAME
+# $APP_NAME
 
 Application shell built with Lit Element, scaffolded via \\\`@quincarter/create-lit-app\\\`.
 
 ## 🚀 Features Enabled
 
 - **Core**: Lit Element, TypeScript, and Vite
-\$(echo -e "\$FEATURES")
+$(echo -e "$FEATURES")
 
 ## 📦 Getting Started
 
 ### Prerequisites
 
-Node.js v18+ and \\\`\$PACKAGE_MANAGER\\\`.
+Node.js 20.19+ (or 22.12+) and \\\`$PACKAGE_MANAGER\\\`.
 
 ### Installation
 
 \\\`\\\`\\\`bash
-\$INSTALL_CMD
+$INSTALL_CMD
 \\\`\\\`\\\`
 
 ### Development
@@ -174,7 +174,7 @@ Node.js v18+ and \\\`\$PACKAGE_MANAGER\\\`.
 Start the local development server:
 
 \\\`\\\`\\\`bash
-\$START_CMD
+$START_CMD
 \\\`\\\`\\\`
 
 ### Building for Production
@@ -182,13 +182,13 @@ Start the local development server:
 Compile TypeScript and build the static assets:
 
 \\\`\\\`\\\`bash
-\$RUN_CMD build
+$RUN_CMD build
 \\\`\\\`\\\`
 
 Preview the production build:
 
 \\\`\\\`\\\`bash
-\$RUN_CMD preview
+$RUN_CMD preview
 \\\`\\\`\\\`
 
 ### Testing
@@ -196,19 +196,19 @@ Preview the production build:
 Run unit tests:
 
 \\\`\\\`\\\`bash
-\$TEST_CMD
+$TEST_CMD
 \\\`\\\`\\\`
 
 ## 📁 Project Structure
 
 \\\`\\\`\\\`
-\$TREE
+$TREE
 \\\`\\\`\\\`
 
 ## 🎨 Code Style & Tooling
 
-- **Formatting**: oxfmt (\\\`\$RUN_CMD fmt\\\` / \\\`\$RUN_CMD fmt:check\\\`)
-- **Linting**: oxlint (\\\`\$RUN_CMD lint\\\` / \\\`\$RUN_CMD lint:fix\\\`)
+- **Formatting**: oxfmt (\\\`$RUN_CMD fmt\\\` / \\\`$RUN_CMD fmt:check\\\`)
+- **Linting**: oxlint (\\\`$RUN_CMD lint\\\` / \\\`$RUN_CMD lint:fix\\\`)
 - **Type Checking**: TypeScript (\\\`npx tsc --noEmit\\\`)
 EOF
 

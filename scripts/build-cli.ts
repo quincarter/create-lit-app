@@ -17,17 +17,20 @@ execSync("npx tsx scripts/create-readme.ts", { stdio: "inherit", cwd: rootDir })
 console.log("🔨 Building create-app-shell.sh from cli/ modules...");
 
 const files: string[] = readdirSync(cliDir)
-	.filter((file: string) => file.endsWith(".sh"))
-	.sort();
+  .filter((file: string) => file.endsWith(".sh"))
+  .sort();
 
 let combinedContent = "";
 
 for (const file of files) {
-	console.log(`  📄 Bundling ${file}...`);
-	const filePath: string = join(cliDir, file);
-	const content: string = readFileSync(filePath, "utf-8");
-	combinedContent += `${content.trimEnd()}\n\n`;
+  console.log(`  📄 Bundling ${file}...`);
+  const filePath: string = join(cliDir, file);
+  const content: string = readFileSync(filePath, "utf-8");
+  combinedContent += `${content.trimEnd()}\n\n`;
 }
+
+const { version } = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf-8"));
+combinedContent = combinedContent.replaceAll("__CLI_VERSION__", version);
 
 writeFileSync(outputFile, combinedContent, "utf-8");
 chmodSync(outputFile, 0o755);
@@ -42,9 +45,9 @@ console.log("✔ bin/create-lit-app.js compiled successfully.");
 
 console.log("🔍 Validating bash script syntax...");
 try {
-	execSync(`bash -n "${outputFile}"`, { stdio: "inherit" });
-	console.log("✔ Syntax check passed!");
-} catch (error) {
-	console.error("✖ Syntax check failed!");
-	process.exit(1);
+  execSync(`bash -n "${outputFile}"`, { stdio: "inherit" });
+  console.log("✔ Syntax check passed!");
+} catch {
+  console.error("✖ Syntax check failed!");
+  process.exit(1);
 }

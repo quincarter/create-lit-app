@@ -81,7 +81,11 @@ import { property } from "lit/decorators.js";
 import { withBase } from "../../shared/configuration/base-path";
 import type { NavItem } from "../../shared/interfaces/navigation.interface";
 import { AppShellHeaderStyles } from "./app-shell-header.styles";
-import "../theme-switcher/theme-switcher";
+EOF
+if [ "$ENABLE_THEME_SWITCHER" = true ]; then
+  echo 'import "../theme-switcher/theme-switcher";' >> src/components/header/AppShellHeader.ts
+fi
+cat <<'EOF' >> src/components/header/AppShellHeader.ts
 
 export class AppShellHeader extends LitElement {
 	@property({ attribute: "routes", type: Array })

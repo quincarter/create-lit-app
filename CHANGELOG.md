@@ -1,5 +1,15 @@
 # @quincarter/create-lit-app
 
+## 1.3.0
+
+### Minor Changes
+
+- updated dependencies and fixed TS errors
+
+### Patch Changes
+
+- Fix scaffolds that failed to compile for some flag combinations (header without router, header without theme switcher, MFE loader without context), render the 404 view for unknown routes, report the real CLI version, validate the app name, warn on unknown flags, format the project after install, and bump oxfmt, oxlint and vitest in generated apps.
+
 ## 1.2.0
 
 ### Minor Changes
