@@ -68,7 +68,7 @@ Every template generates `AGENTS.md`, with `CLAUDE.md` and `GEMINI.md` symlinked
 to it. Add skills to `.agents/skills/<skill-name>/SKILL.md` and agent definitions
 to `.agents/agents`. Both directories include `.gitkeep` files so Git preserves them.
 
-Every template includes four sub-agents in `.agents/agents` as Markdown files with
+Every template includes five sub-agents in `.agents/agents` as Markdown files with
 `name` and `description` frontmatter:
 
 | Agent | Focus |
@@ -77,6 +77,7 @@ Every template includes four sub-agents in `.agents/agents` as Markdown files wi
 | `typescript-expert` | Strict typing, component APIs, and module boundaries |
 | `code-reviewer` | Correctness, security, regressions, and test coverage |
 | `ui-designer` | Accessible, responsive layouts, themes, and interaction states |
+| `test-expert` | Vitest unit tests, Lit component fixtures, and Playwright browser tests |
 
 The `.claude/skills` and `.windsurf/skills` directories link to `.agents/skills`;
 `.claude/agents` and `.windsurf/agents` link to `.agents/agents`. Assistant support

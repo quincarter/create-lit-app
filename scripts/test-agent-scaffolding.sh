@@ -24,7 +24,7 @@ for template in full blank custom; do
         test "$(cat ".agents/$directory/probe")" = shared
       done
     done
-    for agent in lit-expert typescript-expert code-reviewer ui-designer; do
+    for agent in lit-expert typescript-expert code-reviewer ui-designer test-expert; do
       definition=".agents/agents/$agent.md"
       test -s "$definition"
       test "$(head -n 1 "$definition")" = ---
@@ -44,4 +44,4 @@ for template in full blank custom; do
     cmp AGENTS.md GEMINI.md
   )
 done
-echo "Agent scaffolding and four shared sub-agents passed for full, blank, and custom templates."
+echo "Agent scaffolding and shared sub-agents passed for full, blank, and custom templates."
