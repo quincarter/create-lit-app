@@ -62,6 +62,28 @@ npx @quincarter/create-lit-app [options]
 
 ---
 
+## Shared AI Assistant Configuration
+
+Every template generates `AGENTS.md`, with `CLAUDE.md` and `GEMINI.md` symlinked
+to it. Add skills to `.agents/skills/<skill-name>/SKILL.md` and agent definitions
+to `.agents/agents`. Both directories include `.gitkeep` files so Git preserves them.
+
+Every template includes four sub-agents in `.agents/agents` as Markdown files with
+`name` and `description` frontmatter:
+
+| Agent | Focus |
+| :--- | :--- |
+| `lit-expert` | Lit components, reactivity, lifecycle, context, signals, and routing |
+| `typescript-expert` | Strict typing, component APIs, and module boundaries |
+| `code-reviewer` | Correctness, security, regressions, and test coverage |
+| `ui-designer` | Accessible, responsive layouts, themes, and interaction states |
+
+The `.claude/skills` and `.windsurf/skills` directories link to `.agents/skills`;
+`.claude/agents` and `.windsurf/agents` link to `.agents/agents`. Assistant support
+for agent definition formats varies; use a format supported by the consuming tool.
+Edit the canonical files to keep all links synchronized. Windows requires Developer
+Mode or symlink privileges; generation stops with guidance if links cannot be created.
+
 ## Development & Modular Architecture
 
 The generator CLI source is modularized under the `cli/` directory:
@@ -76,6 +98,7 @@ The generator CLI source is modularized under the `cli/` directory:
 - `cli/70-components-generators.sh`: UI component generators (`header`, `theme-switcher`, `card`, `chart-js`, `todos`).
 - `cli/80-views-generators.sh`: Views & ViewMixin generators.
 - `cli/90-app-shell-generator.sh`: Root `app-shell.ts` Lit component generator.
+- `cli/96-agent-generators.sh`: Shared assistant instructions and directory symlinks.
 - `cli/99-post-install.sh`: Post-generation setup steps.
 
 To assemble and validate the combined `create-app-shell.sh` script after making changes in `cli/`:
