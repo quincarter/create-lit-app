@@ -85,6 +85,15 @@ for agent definition formats varies; use a format supported by the consuming too
 Edit the canonical files to keep all links synchronized. Windows requires Developer
 Mode or symlink privileges; generation stops with guidance if links cannot be created.
 
+Templates also include skills in `.agents/skills/<skill-name>/SKILL.md` that teach
+assistants the project's file conventions, and `AGENTS.md` lists the ones generated:
+
+| Skill | Generated when | What it does |
+| :--- | :--- | :--- |
+| `create-component` | Always | New component in `src/components/<tag>/`: `MyCard.ts` (class), `my-card.styles.ts` (styles) and `my-card.ts` (registers the element) |
+| `create-view` | Router enabled | New page in `src/views/<tag>/` on `ViewMixin`, with its styles file and `nav.ts` route entry |
+| `create-signal-store` | Signals enabled | Shared state in `src/shared/stores`, persisted with `persistentSignal`, read through `SignalWatcher` |
+
 ## Development & Modular Architecture
 
 The generator CLI source is modularized under the `cli/` directory:
@@ -100,6 +109,7 @@ The generator CLI source is modularized under the `cli/` directory:
 - `cli/80-views-generators.sh`: Views & ViewMixin generators.
 - `cli/90-app-shell-generator.sh`: Root `app-shell.ts` Lit component generator.
 - `cli/96-agent-generators.sh`: Shared assistant instructions and directory symlinks.
+- `cli/97-skill-generators.sh`: Project skills (`create-component`, `create-view`, `create-signal-store`) and the conventions section of `AGENTS.md`.
 - `cli/99-post-install.sh`: Post-generation setup steps.
 
 To assemble and validate the combined `create-app-shell.sh` script after making changes in `cli/`:

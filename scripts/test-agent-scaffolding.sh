@@ -39,9 +39,36 @@ for template in full blank custom; do
       echo synchronized >> ".claude/agents/$agent.md"
       cmp "$definition" ".windsurf/agents/$agent.md"
     done
+    # Skills: create-component everywhere; create-view needs the router and
+    # create-signal-store needs signals, which the blank template turns off.
+    expected="create-component"
+    absent=""
+    if [ "$template" = blank ]; then
+      absent="create-view create-signal-store"
+    else
+      expected="$expected create-view create-signal-store"
+    fi
+    for skill in $expected; do
+      definition=".agents/skills/$skill/SKILL.md"
+      test -s "$definition"
+      test "$(head -n 1 "$definition")" = ---
+      grep -qx "name: $skill" "$definition"
+      grep -q '^description: .' "$definition"
+      grep -q -- "- $skill:" AGENTS.md
+      for assistant in .claude .windsurf; do
+        cmp "$definition" "$assistant/skills/$skill/SKILL.md"
+      done
+    done
+    for skill in $absent; do
+      test ! -e ".agents/skills/$skill"
+      if grep -q -- "$skill" AGENTS.md; then
+        echo "AGENTS.md mentions $skill, which test-$template does not generate" >&2
+        exit 1
+      fi
+    done
     echo synchronized >> AGENTS.md
     cmp AGENTS.md CLAUDE.md
     cmp AGENTS.md GEMINI.md
   )
 done
-echo "Agent scaffolding and shared sub-agents passed for full, blank, and custom templates."
+echo "Agent scaffolding, shared sub-agents and skills passed for full, blank, and custom templates."

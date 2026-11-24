@@ -39,6 +39,7 @@
     "fmt:check": "oxfmt --check scripts bin package.json tsconfig.json",
     "lint": "oxlint scripts bin",
     "lint:fix": "oxlint --fix scripts bin",
+    "test:agents": "bash scripts/test-agent-scaffolding.sh",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "changeset": "changeset",
