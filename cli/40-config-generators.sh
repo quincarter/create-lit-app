@@ -16,14 +16,14 @@ fi
 if [ "$ENABLE_SIGNALS" = true ]; then
   DEPS="$DEPS,
     \"@lit-labs/preact-signals\": \"^1.0.3\",
-    \"idb\": \"^8.0.3\""
+    \"idb\": \"^8.0.4\""
 fi
 if [ "$ENABLE_CHARTS" = true ]; then
   DEPS="$DEPS,
-    \"chart.js\": \"^4.5.1\",
+    \"chart.js\": \"^4.6.2\",
     \"chartjs-adapter-luxon\": \"^1.3.1\",
     \"luxon\": \"^3.7.2\",
-    \"@kurkle/color\": \"^0.6.4\""
+    \"@kurkle/color\": \"^0.6.6\""
 fi
 
 cat <<EOF > package.json
@@ -48,12 +48,12 @@ cat <<EOF > package.json
   "devDependencies": {
     "@types/luxon": "^3.7.6",
     "@types/mocha": "^10.0.10",
-    "oxfmt": "^0.72.0",
-    "oxlint": "^1.87.0",
+    "oxfmt": "^0.80.0",
+    "oxlint": "^1.95.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.2",
+    "vite": "^8.3.8",
     "vite-plugin-pwa": "^2.0.0",
-    "vitest": "^5.0.3"
+    "vitest": "^5.1.1"
   }
 }
 EOF

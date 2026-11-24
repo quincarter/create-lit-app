@@ -1,0 +1,20 @@
+# One set of line endings on every machine: text is LF in the repository and in the working tree, whatever a
+# machine's own `core.autocrlf` says. Git for Windows defaults to CRLF on checkout, which showed up as stray "\r" in
+# tests that read files and as whole-file diffs when a tool rewrote one.
+* text=auto eol=lf
+
+# Windows batch files only run with CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Never converted, never diffed as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.icns binary
+*.mp3 binary
+*.pdf binary
+*.jar binary
