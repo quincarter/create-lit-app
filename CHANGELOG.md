@@ -1,5 +1,14 @@
 # @quincarter/create-lit-app
 
+## 1.3.1
+
+### Patch Changes
+
+- 9592c96: Generated apps now start on vite 8.3.8, vitest 5.1.1, oxlint 1.95.0, oxfmt 0.80.0, chart.js 4.6.2, idb 8.0.4 and @kurkle/color 0.6.6.
+- 9592c96: Generate project skills: create-component (every template), create-view (router) and create-signal-store (signals), each following the app's file conventions, and list them with those conventions in AGENTS.md.
+- 9592c96: Generate shared assistant instructions, skills and agents with Claude, Gemini and Windsurf symlinks.
+  Include lit-expert, typescript-expert, code-reviewer, ui-designer, and test-expert sub-agent definitions in every template.
+
 ## 1.3.0
 
 ### Minor Changes
