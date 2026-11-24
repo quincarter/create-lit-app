@@ -1,7 +1,8 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { chmodSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { findBash } from "../bin/find-bash.js";
 
 const __filename: string = fileURLToPath(import.meta.url);
 const __dirname: string = dirname(__filename);
@@ -44,8 +45,17 @@ chmodSync(binJsFile, 0o755);
 console.log("✔ bin/create-lit-app.js compiled successfully.");
 
 console.log("🔍 Validating bash script syntax...");
+// From PowerShell or cmd (npm scripts on Windows), `bash` on PATH is usually WSL's,
+// which cannot open a C:\ path; findBash picks Git for Windows' bash instead.
+const bash = findBash();
+if (!bash) {
+  console.error(
+    "✖ No usable bash found. On Windows, install Git for Windows or set CREATE_LIT_APP_BASH.",
+  );
+  process.exit(1);
+}
 try {
-  execSync(`bash -n "${outputFile}"`, { stdio: "inherit" });
+  execFileSync(bash, ["-n", outputFile], { stdio: "inherit" });
   console.log("✔ Syntax check passed!");
 } catch {
   console.error("✖ Syntax check failed!");
