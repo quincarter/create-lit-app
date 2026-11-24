@@ -4,6 +4,7 @@
 
 ### Patch Changes
 
+- On Windows, run the generator and the build's syntax check with Git for Windows' bash instead of whichever `bash` is first on PATH, which from PowerShell or cmd is usually WSL's and failed on `C:\` paths. Set `CREATE_LIT_APP_BASH` to use a different bash.
 - 9592c96: Generated apps now start on vite 8.3.8, vitest 5.1.1, oxlint 1.95.0, oxfmt 0.80.0, chart.js 4.6.2, idb 8.0.4 and @kurkle/color 0.6.6.
 - 9592c96: Generate project skills: create-component (every template), create-view (router) and create-signal-store (signals), each following the app's file conventions, and list them with those conventions in AGENTS.md.
 - 9592c96: Generate shared assistant instructions, skills and agents with Claude, Gemini and Windsurf symlinks.
